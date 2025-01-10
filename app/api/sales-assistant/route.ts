@@ -5,7 +5,9 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const customResponses = {
+type ObjectionKey = "too expensive" | "need to think about it" | "send me an email";
+
+const customResponses: Record<ObjectionKey, string[]> = {
   "too expensive": [
     "Let's focus on the value rather than the price. Our solution will save you X amount in the long run by...",
     "I understand budget is a concern. Would it help to break down the ROI for you?",
@@ -27,7 +29,7 @@ export async function POST(request: Request) {
     const lowerInput = input.toLowerCase();
     const matchingObjection = Object.keys(customResponses).find(key => 
       lowerInput.includes(key)
-    );
+    ) as ObjectionKey | undefined;
 
     let customResponsePrompt = "";
     if (matchingObjection) {
